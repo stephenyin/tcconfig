@@ -23,6 +23,9 @@ from ._network import get_upper_limit_rate
 MIN_PACKET_LOSS_RATE = 0  # [%]
 MAX_PACKET_LOSS_RATE = 100  # [%]
 
+MIN_QUEUE_LIMIT = 1
+MAX_QUEUE_LIMIT = 1000
+
 MIN_PACKET_DUPLICATE_RATE = 0  # [%]
 MAX_PACKET_DUPLICATE_RATE = 100  # [%]
 
@@ -52,6 +55,7 @@ class NetemParameter(object):
         latency_time=None,
         latency_distro_time=None,
         packet_loss_rate=None,
+        queue_limit=None,
         packet_duplicate_rate=None,
         corruption_rate=None,
         reordering_rate=None,
@@ -71,6 +75,10 @@ class NetemParameter(object):
         self.__latency_distro_time = None
         if latency_distro_time:
             self.__latency_distro_time = hr.Time(latency_distro_time, hr.Time.Unit.MILLISECOND)
+
+        self.__queue_limit = None
+        if queue_limit:
+            self.__queue_limit = int(queue_limit)
 
     def __normalize_bandwidth_rate(self, bandwidth_rate):
         if not bandwidth_rate:
@@ -98,6 +106,7 @@ class NetemParameter(object):
         self.validate_bandwidth_rate()
         self.__validate_network_delay()
         self.__validate_packet_loss_rate()
+        self.__validate_queue_limit()
         self.__validate_packet_duplicate_rate()
         self.__validate_corruption_rate()
         self.__validate_reordering_rate()
@@ -105,6 +114,7 @@ class NetemParameter(object):
 
         netem_param_values = [
             self.__packet_loss_rate,
+            self.__queue_limit,
             self.__packet_duplicate_rate,
             self.__corruption_rate,
             self.__reordering_rate,
@@ -161,6 +171,9 @@ class NetemParameter(object):
         if self.__packet_loss_rate:
             item_list.append("loss{}".format(self.__packet_loss_rate))
 
+        if self.__queue_limit:
+            item_list.append("limit{}".format(self.__queue_limit))
+
         if self.__packet_duplicate_rate:
             item_list.append("duplicate{}".format(self.__packet_duplicate_rate))
 
@@ -177,6 +190,9 @@ class NetemParameter(object):
 
         if self.__packet_loss_rate > 0:
             item_list.append("loss {:f}%".format(self.__packet_loss_rate))
+
+        if self.__queue_limit < 1000:
+            item_list.append("limit {:d}".format(self.__queue_limit))
 
         if self.__packet_duplicate_rate > 0:
             item_list.append("duplicate {:f}%".format(self.__packet_duplicate_rate))
@@ -232,6 +248,15 @@ class NetemParameter(object):
             MIN_PACKET_LOSS_RATE,
             MAX_PACKET_LOSS_RATE,
             unit="%",
+        )
+
+    def __validate_queue_limit(self):
+        validate_within_min_max(
+            "limit (queue limit)",
+            self.__queue_limit,
+            MIN_QUEUE_LIMIT,
+            MAX_QUEUE_LIMIT,
+            unit=None,
         )
 
     def __validate_packet_duplicate_rate(self):

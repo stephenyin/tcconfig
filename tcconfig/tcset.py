@@ -29,10 +29,12 @@ from ._netem_param import (
     MAX_CORRUPTION_RATE,
     MAX_PACKET_DUPLICATE_RATE,
     MAX_PACKET_LOSS_RATE,
+    MAX_QUEUE_LIMIT,
     MAX_REORDERING_RATE,
     MIN_CORRUPTION_RATE,
     MIN_PACKET_DUPLICATE_RATE,
     MIN_PACKET_LOSS_RATE,
+    MIN_QUEUE_LIMIT,
     MIN_REORDERING_RATE,
     NetemParameter,
 )
@@ -136,6 +138,16 @@ def get_arg_parser():
         to {:d}. (default=%(default)s)
         """.format(
             MIN_PACKET_LOSS_RATE, MAX_PACKET_LOSS_RATE
+        ),
+    )
+    group.add_argument(
+        "--limit",
+        dest="queue_limit",
+        default=MAX_QUEUE_LIMIT,
+        help="""netem queue packet limit. the valid range is from {:d}
+        to {:d}. (default=%(default)s)
+        """.format(
+            MIN_QUEUE_LIMIT, MAX_QUEUE_LIMIT
         ),
     )
     group.add_argument(
@@ -302,6 +314,7 @@ class TcSetMain(Main):
                 latency_time=options.network_latency,
                 latency_distro_time=options.latency_distro_time,
                 packet_loss_rate=options.packet_loss_rate,
+                queue_limit=options.queue_limit,
                 packet_duplicate_rate=options.packet_duplicate_rate,
                 corruption_rate=options.corruption_rate,
                 reordering_rate=options.reordering_rate,
