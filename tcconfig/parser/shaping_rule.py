@@ -158,11 +158,11 @@ class TcShapingRuleParser(object):
 
             src_port = filter_param.get(Tc.Param.SRC_PORT)
             if typepy.Integer(src_port).is_type():
-                key_items[Tc.Param.SRC_PORT] = "{:s}".format(src_port)
+                key_items[Tc.Param.SRC_PORT] = "{:d}".format(int(src_port))
 
             dst_port = filter_param.get(Tc.Param.DST_PORT)
             if typepy.Integer(dst_port).is_type():
-                key_items[Tc.Param.DST_PORT] = "{:s}".format(dst_port)
+                key_items[Tc.Param.DST_PORT] = "{:d}".format(int(dst_port))
 
             protocol = filter_param.get(Tc.Param.PROTOCOL)
             if typepy.is_not_null_string(protocol):
