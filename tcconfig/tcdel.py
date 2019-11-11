@@ -111,6 +111,8 @@ class TcDelMain(Main):
                 sys.exit(1)
 
             filter_param = result[0]
+            if len(result) > 1 and options.direction == 'incoming':
+                filter_param = result[1]
             dst_network = filter_param.get(Tc.Param.DST_NETWORK)
             src_network = filter_param.get(Tc.Param.SRC_NETWORK)
             dst_port = filter_param.get(Tc.Param.DST_PORT)
