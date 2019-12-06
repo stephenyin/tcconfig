@@ -119,7 +119,15 @@ class TrafficControl(object):
 
     @property
     def qdisc_major_id_str(self):
-        return "{:x}".format(self.__qdisc_major_id)
+        """
+        Return a device major_id that associated network communication direction.
+        """
+
+        if self.direction == TrafficDirection.OUTGOING:
+            return "{:x}".format(self.__qdisc_major_id + 1)
+
+        if self.direction == TrafficDirection.INCOMING:
+            return "{:x}".format(self.__qdisc_major_id)
 
     @property
     def ip_version(self):
