@@ -111,15 +111,19 @@ class HtbShaper(AbstractShaper):
             "classid {:s}".format(classid),
             self.algorithm_name,
             "rate {}Kbit".format(bandwidth.kilo_bps),
-            "ceil {}Kbit".format(bandwidth.kilo_bps),
+            "ceil {}Kbit".format(bandwidth.kilo_bps * 1.2),
         ]
 
         if bandwidth != upper_limit_rate:
             command_item_list.extend(
                 [
-                    "burst {}KB".format(bandwidth.kilo_bps / (10 * 8)), 
-                    "cburst {}KB".format(bandwidth.kilo_bps / (10 * 8))
+                    "burst {}KB".format(bandwidth.kilo_bps / (10 * 8)),  
+                    "cburst 1.5KB"
                 ]
+                # [
+                #     "burst {}KB".format(bandwidth.kilo_bps / (10 * 8)), 
+                #     "cburst {}KB".format(bandwidth.kilo_bps / (10 * 8))
+                # ]
                 # [
                 #     "burst {}KB".format(bandwidth.kilo_byte_per_sec),
                 #     "cburst {}KB".format(bandwidth.kilo_byte_per_sec),
