@@ -99,11 +99,48 @@ def get_arg_parser():
         dest="bandwidth_rate",
         help="""network bandwidth rate [bit per second].
         the minimum bandwidth rate is 8 bps.
+        Maximum rate this class and all its children are guaranteed.
         valid units are either: {}.
         e.g. tcset eth0 --rate 10Mbps
         """.format(
             ", ".join([", ".join(values) for values in hr.BitPerSecond.get_text_units().values()])
         ),
+    )
+    group.add_argument(
+        "--ceil",
+        "--ceil-rate",
+        dest="ceil_rate",
+        help="""network ceil rate [bit per second].
+        the minimum ceil rate is 8 bps.
+        Maximum rate at which a class can send, if its parent has bandwidth to spare. 
+        Defaults to the configured rate, which implies no borrowing.
+        valid units are either: {}.
+        e.g. tcset eth0 --rate 10Mbps --ceil 12Mbps
+        """.format(
+            ", ".join([", ".join(values) for values in hr.BitPerSecond.get_text_units().values()])
+        ),
+    )
+    group.add_argument(
+        "--burst",
+        "--burst-kilobytes",
+        dest="burst-kilobytes",
+        help="""network burstm in kilo-bytes.
+        the minimum burst is 0 bytes.
+        Amount of bytes that can be burst at ceil speed, in excess of the configured rate. 
+        Should be at least as high as the highest burst of allchildren.
+        e.g. tcset eth0 --rate 10Mbps --ceil 12Mbps --burst 5KB
+        """
+    )
+    group.add_argument(
+        "--cburst",
+        "--cburst-kilobytes",
+        dest="cburst-kilobytes",
+        help="""network cburst in kilo-bytes.
+        the minimum cburst is 0 bytes.
+        Amount of bytes that can be burst at 'infinite' speed, in other words, as fast as the interface can transmit them. 
+        For perfect evening out, should be equalto at most one average packet. Should be at least as high as the highest cburst of all children.
+        e.g. tcset eth0 --rate 10Mbps --ceil 12Mbps --burst 5KB --cburst 1.5KB
+        """
     )
     group.add_argument(
         "--delay",

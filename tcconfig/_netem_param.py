@@ -48,10 +48,25 @@ class NetemParameter(object):
     def bandwidth_rate(self):
         return self.__bandwidth_rate
 
+    @property
+    def ceil_rate(self):
+        return self.__ceil_rate
+
+    @property
+    def burst_kilobytes(self):
+        return self.__burst_kilobytes
+
+    @property
+    def cburst_kilobytes(self):
+        return self.__cburst_kilobytes
+
     def __init__(
         self,
         device,
         bandwidth_rate=None,
+        ceil_rate=None,
+        burst_kilobytes=None,
+        cburst_kilobytes=None,
         latency_time=None,
         latency_distro_time=None,
         packet_loss_rate=None,
@@ -63,10 +78,19 @@ class NetemParameter(object):
         self.__device = device
 
         self.__bandwidth_rate = self.__normalize_bandwidth_rate(bandwidth_rate)
+        self.__ceil_rate = self.__normalize_bandwidth_rate(ceil_rate)
         self.__packet_loss_rate = convert_rate_to_f(packet_loss_rate)  # [%]
         self.__packet_duplicate_rate = convert_rate_to_f(packet_duplicate_rate)  # [%]
         self.__corruption_rate = convert_rate_to_f(corruption_rate)  # [%]
         self.__reordering_rate = convert_rate_to_f(reordering_rate)  # [%]
+
+        self.__burst_kilobytes = None
+        if burst_kilobytes:
+            self.__burst_kilobytes = int(queue_limit)
+
+        self.__cburst_kilobytes = None
+        if cburst_kilobytes:
+            self.__cburst_kilobytes = int(queue_limit)
 
         self.__latency_time = None
         if latency_time:
@@ -161,6 +185,15 @@ class NetemParameter(object):
 
         if self.bandwidth_rate:
             item_list.append("rate{}kbps".format(int(self.bandwidth_rate.kilo_bps)))
+
+        if self.ceil_rate:
+            item_list.append("ceil{}kbps".format(int(self.ceil_rate.kilo_bps)))
+
+        if self.__burst_kilobytes:
+            item_list.append("burst{}".format(self.__burst_kilobytes))
+
+        if self.__cburst_kilobytes:
+            item_list.append("cburst{}".format(self.__cburst_kilobytes))
 
         if self.__latency_time and self.__latency_time.milliseconds > 0:
             item_list.append("delay{}".format(self.__latency_time.milliseconds))

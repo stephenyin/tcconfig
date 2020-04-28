@@ -103,6 +103,9 @@ class HtbShaper(AbstractShaper):
         bandwidth = self._tc_obj.netem_param.bandwidth_rate
         if bandwidth is None:
             bandwidth = upper_limit_rate
+            ceil_rate = upper_limit_rate
+        else:
+            ceil_rate = self._tc_obj.netem_param.ceil_rate if self._tc_obj.netem_param.ceil_rate not None else bandwidth
 
         command_item_list = [
             base_command,
@@ -111,23 +114,23 @@ class HtbShaper(AbstractShaper):
             "classid {:s}".format(classid),
             self.algorithm_name,
             "rate {}Kbit".format(bandwidth.kilo_bps),
-            "ceil {}Kbit".format(bandwidth.kilo_bps * 1.2),
+            "ceil {}Kbit".format(ceil_rate.kilo_bps),
         ]
 
         if bandwidth != upper_limit_rate:
+            burst_kilobytes_ = self._tc_obj.netem_param.burst_kilobytes
+            if burst_kilobytes_ is None:
+                burst_kilobytes_ = bandwidth.kilo_bps / (10 * 8)
+
+            cburst_kilobytes_ = self._tc_obj.netem_param.cburst_kilobytes
+            if cburst_kilobytes_ is None:
+                cburst_kilobytes_ = bandwidth.kilo_bps / (10 * 8)
+
             command_item_list.extend(
                 [
-                    "burst {}KB".format(bandwidth.kilo_bps / (10 * 8)),  
-                    "cburst 1.5KB"
+                    "burst {}KB".format(burst_kilobytes_),
+                    "cburst {}KB".format(cburst_kilobytes_)
                 ]
-                # [
-                #     "burst {}KB".format(bandwidth.kilo_bps / (10 * 8)), 
-                #     "cburst {}KB".format(bandwidth.kilo_bps / (10 * 8))
-                # ]
-                # [
-                #     "burst {}KB".format(bandwidth.kilo_byte_per_sec),
-                #     "cburst {}KB".format(bandwidth.kilo_byte_per_sec),
-                # ]
             )
 
         run_command_helper(
