@@ -123,7 +123,7 @@ def get_arg_parser():
     group.add_argument(
         "--burst",
         "--burst-kilobytes",
-        dest="burst-kilobytes",
+        dest="burst_kilobytes",
         help="""network burstm in kilo-bytes.
         the minimum burst is 0 bytes.
         Amount of bytes that can be burst at ceil speed, in excess of the configured rate. 
@@ -134,7 +134,7 @@ def get_arg_parser():
     group.add_argument(
         "--cburst",
         "--cburst-kilobytes",
-        dest="cburst-kilobytes",
+        dest="cburst_kilobytes",
         help="""network cburst in kilo-bytes.
         the minimum cburst is 0 bytes.
         Amount of bytes that can be burst at 'infinite' speed, in other words, as fast as the interface can transmit them. 
@@ -348,6 +348,9 @@ class TcSetMain(Main):
             netem_param=NetemParameter(
                 device=device,
                 bandwidth_rate=options.bandwidth_rate,
+                ceil_rate=options.ceil_rate,
+                burst_kilobytes=options.burst_kilobytes,
+                cburst_kilobytes=options.cburst_kilobytes,
                 latency_time=options.network_latency,
                 latency_distro_time=options.latency_distro_time,
                 packet_loss_rate=options.packet_loss_rate,

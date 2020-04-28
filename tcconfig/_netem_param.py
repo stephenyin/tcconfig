@@ -86,11 +86,11 @@ class NetemParameter(object):
 
         self.__burst_kilobytes = None
         if burst_kilobytes:
-            self.__burst_kilobytes = int(queue_limit)
+            self.__burst_kilobytes = float(burst_kilobytes)
 
         self.__cburst_kilobytes = None
         if cburst_kilobytes:
-            self.__cburst_kilobytes = int(queue_limit)
+            self.__cburst_kilobytes = float(cburst_kilobytes)
 
         self.__latency_time = None
         if latency_time:
@@ -186,14 +186,14 @@ class NetemParameter(object):
         if self.bandwidth_rate:
             item_list.append("rate{}kbps".format(int(self.bandwidth_rate.kilo_bps)))
 
-        if self.ceil_rate:
-            item_list.append("ceil{}kbps".format(int(self.ceil_rate.kilo_bps)))
+        # if self.ceil_rate:
+        #     item_list.append("ceil{}kbps".format(int(self.ceil_rate.kilo_bps)))
 
-        if self.__burst_kilobytes:
-            item_list.append("burst{}".format(self.__burst_kilobytes))
+        # if self.__burst_kilobytes:
+        #     item_list.append("burst{}".format(self.__burst_kilobytes))
 
-        if self.__cburst_kilobytes:
-            item_list.append("cburst{}".format(self.__cburst_kilobytes))
+        # if self.__cburst_kilobytes:
+        #     item_list.append("cburst{}".format(self.__cburst_kilobytes))
 
         if self.__latency_time and self.__latency_time.milliseconds > 0:
             item_list.append("delay{}".format(self.__latency_time.milliseconds))
