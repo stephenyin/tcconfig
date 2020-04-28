@@ -186,14 +186,14 @@ class NetemParameter(object):
         if self.bandwidth_rate:
             item_list.append("rate{}kbps".format(int(self.bandwidth_rate.kilo_bps)))
 
-        # if self.ceil_rate:
-        #     item_list.append("ceil{}kbps".format(int(self.ceil_rate.kilo_bps)))
+        if self.ceil_rate:
+            item_list.append("ceil{}kbps".format(int(self.ceil_rate.kilo_bps)))
 
-        # if self.__burst_kilobytes:
-        #     item_list.append("burst{}".format(self.__burst_kilobytes))
+        if self.__burst_kilobytes:
+            item_list.append("burst{}".format(self.__burst_kilobytes))
 
-        # if self.__cburst_kilobytes:
-        #     item_list.append("cburst{}".format(self.__cburst_kilobytes))
+        if self.__cburst_kilobytes:
+            item_list.append("cburst{}".format(self.__cburst_kilobytes))
 
         if self.__latency_time and self.__latency_time.milliseconds > 0:
             item_list.append("delay{}".format(self.__latency_time.milliseconds))
@@ -224,7 +224,7 @@ class NetemParameter(object):
         if self.__packet_loss_rate > 0:
             item_list.append("loss {:f}%".format(self.__packet_loss_rate))
 
-        if self.__queue_limit < 1000:
+        if self.__queue_limit <= 1000:
             item_list.append("limit {:d}".format(self.__queue_limit))
 
         if self.__packet_duplicate_rate > 0:
