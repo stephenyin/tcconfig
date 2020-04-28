@@ -70,6 +70,7 @@ class NetemParameter(object):
         latency_time=None,
         latency_distro_time=None,
         packet_loss_rate=None,
+        packet_loss_correlation=None,
         queue_limit=None,
         packet_duplicate_rate=None,
         corruption_rate=None,
@@ -80,6 +81,7 @@ class NetemParameter(object):
         self.__bandwidth_rate = self.__normalize_bandwidth_rate(bandwidth_rate)
         self.__ceil_rate = self.__normalize_bandwidth_rate(ceil_rate)
         self.__packet_loss_rate = convert_rate_to_f(packet_loss_rate)  # [%]
+        self.__packet_loss_correlation = convert_rate_to_f(packet_loss_correlation)  # [%]
         self.__packet_duplicate_rate = convert_rate_to_f(packet_duplicate_rate)  # [%]
         self.__corruption_rate = convert_rate_to_f(corruption_rate)  # [%]
         self.__reordering_rate = convert_rate_to_f(reordering_rate)  # [%]
@@ -130,6 +132,7 @@ class NetemParameter(object):
         self.validate_bandwidth_rate()
         self.__validate_network_delay()
         self.__validate_packet_loss_rate()
+        self.__validate_packet_loss_correlation()
         self.__validate_queue_limit()
         self.__validate_packet_duplicate_rate()
         self.__validate_corruption_rate()
@@ -138,6 +141,7 @@ class NetemParameter(object):
 
         netem_param_values = [
             self.__packet_loss_rate,
+            self.__packet_loss_correlation,
             self.__queue_limit,
             self.__packet_duplicate_rate,
             self.__corruption_rate,
@@ -204,6 +208,9 @@ class NetemParameter(object):
         if self.__packet_loss_rate:
             item_list.append("loss{}".format(self.__packet_loss_rate))
 
+        if self.__packet_loss_correlation:
+            item_list.append("correlation{}".format(self.__packet_loss_correlation))
+
         if self.__queue_limit:
             item_list.append("limit{}".format(self.__queue_limit))
 
@@ -223,6 +230,8 @@ class NetemParameter(object):
 
         if self.__packet_loss_rate > 0:
             item_list.append("loss {:f}%".format(self.__packet_loss_rate))
+            if self.__packet_loss_correlation > 0:
+                item_list.append("{:f}%".format(self.__packet_loss_correlation))
 
         if self.__queue_limit <= 1000:
             item_list.append("limit {:d}".format(self.__queue_limit))
@@ -278,6 +287,15 @@ class NetemParameter(object):
         validate_within_min_max(
             "loss (packet loss rate)",
             self.__packet_loss_rate,
+            MIN_PACKET_LOSS_RATE,
+            MAX_PACKET_LOSS_RATE,
+            unit="%",
+        )
+
+    def __validate_packet_loss_correlation(self):
+        validate_within_min_max(
+            "correlation (packet loss correlation)",
+            self.__packet_loss_correlation,
             MIN_PACKET_LOSS_RATE,
             MAX_PACKET_LOSS_RATE,
             unit="%",

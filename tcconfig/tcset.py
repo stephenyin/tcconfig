@@ -178,6 +178,18 @@ def get_arg_parser():
         ),
     )
     group.add_argument(
+        "--loss-correlation",
+        dest="packet_loss_correlation",
+        default=0,
+        help="""packet loss correlation [%%],
+        This causes the random number generator to be less random and can be used to emulate packet burst losses. 
+        the valid range is from {:d}
+        to {:d}. (default=%(default)s)
+        """.format(
+            MIN_PACKET_LOSS_RATE, MAX_PACKET_LOSS_RATE
+        ),
+    )
+    group.add_argument(
         "--limit",
         dest="queue_limit",
         default=MAX_QUEUE_LIMIT,
@@ -354,6 +366,7 @@ class TcSetMain(Main):
                 latency_time=options.network_latency,
                 latency_distro_time=options.latency_distro_time,
                 packet_loss_rate=options.packet_loss_rate,
+                packet_loss_correlation=options.packet_loss_correlation,
                 queue_limit=options.queue_limit,
                 packet_duplicate_rate=options.packet_duplicate_rate,
                 corruption_rate=options.corruption_rate,
